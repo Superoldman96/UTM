@@ -30,6 +30,7 @@
 #include "UTMProcess.h"
 #include "UTMQemuSystem.h"
 #include "UTMJailbreak.h"
+#include "UTMASIFImage.h"
 #else
 #include "UTMQemuSystemBackends.h"
 #endif
