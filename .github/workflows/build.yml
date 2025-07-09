@@ -74,8 +74,9 @@ jobs:
         id: cache-sysroot
         uses: actions/cache@v4
         with:
-          path: sysroot-${{ matrix.platform }}-${{ matrix.arch }}
-          key: ${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}
+          path: ./sysroot-${{ matrix.platform }}-${{ matrix.arch }}
+          key: ${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}-${{ github.sha }}
+          restore-keys: ${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}
           upload-chunk-size: 1048576 # 1 MiB
           lookup-only: true
       - name: Setup Path
@@ -114,23 +115,24 @@ jobs:
         id: cache-sysroot-universal
         uses: actions/cache@v4
         with:
-          path: sysroot-macOS-arm64_x86_64
-          key: macos-universal-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/pack_dependencies.sh') }}-${{ hashFiles('patches/**') }}
+          path: ./sysroot-macOS-arm64_x86_64
+          key: macos-universal-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/pack_dependencies.sh') }}-${{ hashFiles('patches/**') }}-${{ github.sha }}
+          restore-keys: macos-universal-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/pack_dependencies.sh') }}-${{ hashFiles('patches/**') }}
           lookup-only: true
       - name: Cache Sysroot (arm64)
         if: steps.cache-sysroot-universal.outputs.cache-hit != 'true'
         id: cache-sysroot-arm64
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
-          path: sysroot-macos-arm64
+          path: ./sysroot-macos-arm64
           key: macos-arm64-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}
           fail-on-cache-miss: true
       - name: Cache Sysroot (x86_64)
         if: steps.cache-sysroot-universal.outputs.cache-hit != 'true'
         id: cache-sysroot-x86_64
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
-          path: sysroot-macos-x86_64
+          path: ./sysroot-macos-x86_64
           key: macos-x86_64-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}
           fail-on-cache-miss: true
       - name: Pack Universal Sysroot
@@ -169,9 +171,9 @@ jobs:
           submodules: recursive
       - name: Cache Sysroot
         id: cache-sysroot
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
-          path: sysroot-${{ matrix.configuration.platform }}-${{ matrix.configuration.arch }}
+          path: ./sysroot-${{ matrix.configuration.platform }}-${{ matrix.configuration.arch }}
           key: ${{ matrix.configuration.platform }}-${{ matrix.configuration.arch }}-${{ hashFiles('scripts/build_dependencies.sh') }}-${{ hashFiles('patches/**') }}
           fail-on-cache-miss: true
       - name: Setup Xcode
@@ -198,9 +200,9 @@ jobs:
           submodules: recursive
       - name: Cache Sysroot
         id: cache-sysroot
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
-          path: sysroot-macOS-arm64_x86_64
+          path: ./sysroot-macOS-arm64_x86_64
           key: macos-universal-${{ hashFiles('scripts/build_dependencies.sh', 'scripts/pack_dependencies.sh') }}-${{ hashFiles('patches/**') }}
           fail-on-cache-miss: true
       - name: Setup Xcode
